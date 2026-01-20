@@ -23,13 +23,13 @@
 
               <!-- PLAY OVERLAY -->
               <div
-                class="absolute inset-0 bg-black/30 flex items-center justify-center cursor-pointer transition hover:bg-black/40"
+                class="absolute inset-0 bg-black/10 flex items-center justify-center cursor-pointer transition hover:bg-black/40"
                 @click="item.isPlaying = true"
               >
                 <div
-                  class="w-16 h-16 sm:w-20 sm:h-20 bg-white rounded-full flex items-center justify-center text-2xl sm:text-3xl text-black shadow-lg"
+                  class="w-20 h-20 bg-white rounded-full flex items-center justify-center shadow-lg text-red-600"
                 >
-                  ▶
+                  <i class="fa-brands fa-youtube text-4xl"></i>
                 </div>
               </div>
             </template>

@@ -13,9 +13,9 @@
             @click="isPlaying = true"
           >
             <div
-              class="w-20 h-20 bg-white rounded-full flex items-center justify-center text-3xl text-black shadow-lg"
+              class="w-20 h-20 bg-white rounded-full flex items-center justify-center shadow-lg text-red-600"
             >
-              ▶
+              <i class="fa-brands fa-youtube text-4xl"></i>
             </div>
           </div>
         </template>

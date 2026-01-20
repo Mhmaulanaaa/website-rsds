@@ -1,16 +1,9 @@
 <template>
-  <section class="bg-gradient-to- from-emerald-50 via-white to-emerald-50 min-h-screen">
+  <section class="bg-gradient-to- from-emerald-50 via-white to-emerald-50 pt-20">
     <!-- BREADCRUMB -->
-    <div class="max-w-7xl mx-auto px-6 pt-6 text-sm text-gray-600">
-      <nav class="flex items-center gap-2">
-        <span class="hover:text-emerald-600 cursor-pointer">Home</span>
-        <span>/</span>
-        <span class="hover:text-emerald-600 cursor-pointer">Profil</span>
-        <span>/</span>
-        <span class="text-emerald-600 font-semibold"> Tentang Kami </span>
-      </nav>
+    <div class="max-w-7xl mx-auto px-6 mt-10">
+      <Breadcrumb />
     </div>
-
     <!-- HERO -->
     <div class="max-w-7xl mx-auto px-6 py-5">
       <div class="relative bg-emerald-600 rounded-3xl p-10 text-white overflow-hidden">
@@ -36,7 +29,7 @@
     </div>
 
     <!-- TABS -->
-    <div class="max-w-7xl mx-auto px-6 -mt-4">
+    <div class="max-w-7xl mx-auto px-6 -mt-1">
       <div class="bg-white rounded-2xl shadow-lg p-5">
         <div class="relative flex justify-center gap-8">
           <button
@@ -64,7 +57,7 @@
     </div>
 
     <!-- CONTENT -->
-    <div class="max-w-7xl mx-auto px-6 py-16">
+    <div class="max-w-7xl mx-auto px-6 py-14">
       <transition name="fade" mode="out-in">
         <component
           :is="tabComponent"
@@ -76,57 +69,96 @@
   </section>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, computed, onMounted, nextTick } from "vue";
 
 import Sekilas from "@/components/profil/tentangkami/Sekilas.vue";
 import Sejarah from "@/components/profil/tentangkami/Sejarah.vue";
 import Lambang from "@/components/profil/tentangkami/Lambang.vue";
 import Mars from "@/components/profil/tentangkami/Mars.vue";
+import Breadcrumb from "~/components/layout/Breadcrumb.vue";
 
-const tabs = [
+/* =====================
+    TABS
+  ===================== */
+interface TabItem {
+  key: "sekilas" | "sejarah" | "lambang" | "mars";
+  label: string;
+}
+
+const tabs: TabItem[] = [
   { key: "sekilas", label: "Sekilas" },
   { key: "sejarah", label: "Sejarah" },
   { key: "lambang", label: "Lambang" },
   { key: "mars", label: "Mars & Himne" },
 ];
 
-const activeTab = ref("sekilas");
-const tabRefs = ref([]);
-const underlineStyle = ref({
+const activeTab = ref<TabItem["key"]>("sekilas");
+
+/* =====================
+    TAB REFS (DOM)
+  ===================== */
+const tabRefs = ref<HTMLElement[]>([]);
+
+const underlineStyle = ref<{
+  width: string;
+  left: string;
+}>({
   width: "0px",
-  transform: "translateX(0px)",
+  left: "0px",
 });
 
-// mapping tab → component
-const tabComponent = computed(
-  () =>
-    ({
-      sekilas: Sekilas,
-      sejarah: Sejarah,
-      lambang: Lambang,
-      mars: Mars,
-    }[activeTab.value])
-);
+/* =====================
+    COMPONENT MAP
+  ===================== */
+const tabComponent = computed(() => {
+  const map: Record<TabItem["key"], any> = {
+    sekilas: Sekilas,
+    sejarah: Sejarah,
+    lambang: Lambang,
+    mars: Mars,
+  };
+  return map[activeTab.value];
+});
 
-const setActiveTab = async (key, index) => {
+/* =====================
+    METHODS
+  ===================== */
+const setActiveTab = async (key: TabItem["key"], index: number) => {
   activeTab.value = key;
   await nextTick();
   moveUnderline(index);
 };
 
-const moveUnderline = (index) => {
+const moveUnderline = (index: number) => {
   const el = tabRefs.value[index];
   if (!el) return;
 
   underlineStyle.value = {
-    width: `${el.clientWidth}px`,
+    width: `${el.offsetWidth}px`,
     left: `${el.offsetLeft}px`,
   };
 };
 
-onMounted(() => {
-  nextTick(() => moveUnderline(0));
+const updateUnderline = () => {
+  const index = tabs.findIndex((tab) => tab.key === activeTab.value);
+  moveUnderline(index);
+};
+
+/* =====================
+    BREADCRUMB META
+  ===================== */
+definePageMeta({
+  breadcrumb: [{ label: "Beranda", to: "/" }, { label: "Profil - Tentang Kami" }],
+});
+
+/* =====================
+    INIT
+  ===================== */
+onMounted(async () => {
+  await nextTick();
+  moveUnderline(0);
+  window.addEventListener("resize", updateUnderline);
 });
 </script>
 

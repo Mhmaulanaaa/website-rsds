@@ -1,5 +1,5 @@
 <template>
-  <section class="relative overflow-hidden py-1">
+  <section class="relative overflow-hidden py-5">
     <!-- BG -->
     <!-- CONTENT -->
     <div class="relative z-10 max-w-7xl mx-auto px-6">

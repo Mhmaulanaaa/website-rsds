@@ -1,5 +1,5 @@
 <template>
-  <section class="relative h-screen overflow-hidden -mt-0">
+  <section class="relative h-screen overflow-hidden">
     <!-- Background Slides -->
     <transition-group name="fade" tag="div">
       <div
@@ -23,15 +23,15 @@
             <span
               class="inline-block mb-4 text-sm font-semibold tracking-widest text-green-300"
             >
-              {{ slides[active].subtitle }}
+              {{ slides[active]?.subtitle }}
             </span>
 
             <h1 class="text-white text-5xl md:text-6xl font-bold leading-tight max-w-3xl">
-              {{ slides[active].title }}
+              {{ slides[active]?.title }}
             </h1>
 
             <p class="mt-6 max-w-xl text-white/90 text-lg">
-              {{ slides[active].description }}
+              {{ slides[active]?.description }}
             </p>
 
             <!-- CTA -->
@@ -39,13 +39,13 @@
               <button
                 class="px-6 py-3 bg-green-500 text-white rounded-full font-semibold hover:bg-green-600 transition"
               >
-                {{ slides[active].ctaPrimary }}
+                {{ slides[active]?.ctaPrimary }}
               </button>
 
               <button
                 class="px-6 py-3 border border-white text-white rounded-full font-semibold hover:bg-white hover:text-black transition"
               >
-                {{ slides[active].ctaSecondary }}
+                {{ slides[active]?.ctaSecondary }}
               </button>
             </div>
           </div>
@@ -81,10 +81,20 @@
   </section>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, onMounted, onUnmounted } from "vue";
 
-const slides = [
+interface Slide {
+  image: string;
+  subtitle: string;
+  title: string;
+  description: string;
+  ctaPrimary: string;
+  ctaSecondary: string;
+}
+
+// Slide data
+const slides: Slide[] = [
   {
     image: "/images/gedung1.webp",
     subtitle: "RS RUJUKAN NASIONAL",
@@ -157,7 +167,8 @@ const slides = [
 ];
 
 const active = ref(0);
-let interval;
+const mounted = ref(false);
+let interval: number;
 
 const next = () => {
   active.value = (active.value + 1) % slides.length;
@@ -168,14 +179,16 @@ const prev = () => {
 };
 
 onMounted(() => {
-  interval = setInterval(next, 6000);
+  mounted.value = true; // slider baru muncul di client
+  interval = window.setInterval(next, 6000);
 });
 
-onUnmounted(() => clearInterval(interval));
+onUnmounted(() => {
+  clearInterval(interval);
+});
 </script>
 
 <style>
-/* Background fade */
 .fade-enter-active,
 .fade-leave-active {
   transition: opacity 1s ease;
@@ -185,7 +198,6 @@ onUnmounted(() => clearInterval(interval));
   opacity: 0;
 }
 
-/* Text animation */
 .slide-up-enter-active,
 .slide-up-leave-active {
   transition: all 0.4s ease;
