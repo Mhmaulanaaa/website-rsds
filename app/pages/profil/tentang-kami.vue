@@ -37,7 +37,7 @@
             :key="tab.key"
             ref="tabRefs"
             @click="setActiveTab(tab.key, index)"
-            class="px-2 py-3 font-semibold transition-colors duration-300"
+            class="px-2 py-3 font-light transition-colors duration-300"
             :class="
               activeTab === tab.key
                 ? 'text-emerald-600'
